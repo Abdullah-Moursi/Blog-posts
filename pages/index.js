@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { PostCard, Categories, PostWidget } from '../components'
 
 const posts = [
   {
@@ -19,12 +20,17 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-        {posts.map((post, index) => (
-          <div key={index}>
-            {post.title}
-            {post.excerpt}
+        <div className="col-span-1 lg:col-span-8">
+          {posts.map((post) => (
+            <PostCard key={post.title} post={post} />
+          ))}
+        </div>
+        <div className="col-span-1 lg:col-span-4">
+          <div className="relative top-8 lg:sticky">
+            <PostWidget />
+            <Categories />
           </div>
-        ))}
+        </div>
       </div>
     </div>
   )
