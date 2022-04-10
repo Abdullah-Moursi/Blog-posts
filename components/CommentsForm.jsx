@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { submitComment } from '../services'
 
 const CommentsForm = ({ slug }) => {
   const [error, setError] = useState(false)
@@ -9,6 +10,11 @@ const CommentsForm = ({ slug }) => {
   const nameEl = useRef()
   const emailEl = useRef()
   const storeDataEl = useRef()
+
+  useEffect(() => {
+    nameEl.current.value = window.localStorage.getItem('name')
+    emailEl.current.value = window.localStorage.getItem('email')
+  })
 
   const handleCommentSubmission = (e) => {
     e.preventDefault()
@@ -24,21 +30,28 @@ const CommentsForm = ({ slug }) => {
       return
     }
 
-    const commentObj = {name, email, comment, slug}
+    const commentObj = { name, email, comment, slug }
 
-    if(storeData) {
-      localStorage.setItem('name', name);
-      localStorage.setItem('email', email)
+    if (storeData) {
+      window.localStorage.setItem('name', name)
+      window.localStorage.setItem('email', email)
     } else {
-      localStorage.removeItem('name', name);
-      localStorage.removeItem('email', email)
+      window.localStorage.removeItem('name', name)
+      window.localStorage.removeItem('email', email)
     }
+
+    submitComment(commentObj).then((res) => {
+      setShowSuccessMessage(true)
+      setTimeout(() => {
+        setShowSuccessMessage(false)
+      }, 3000)
+    })
   }
 
   return (
     <div className="mb-8 rounded-lg bg-white p-8 pb-12 shadow-lg">
       <h3 className="mb-8 border-b pb-4 text-xl font-semibold">
-        Comments Form
+        Leave a Reply
       </h3>
       <div className="mb-4 grid grid-cols-1 gap-4">
         <textarea
@@ -73,7 +86,10 @@ const CommentsForm = ({ slug }) => {
             name="storeData"
             value="true"
           />
-          <label className='text-gray-500 cursor-pointer ml-2' htmlFor="storeData">
+          <label
+            className="ml-2 cursor-pointer text-gray-500"
+            htmlFor="storeData"
+          >
             Save my e-mail and name for the next time I comment.
           </label>
         </div>
