@@ -1,10 +1,12 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { getCategories } from '../services'
 
 const Header = () => {
   const [categories, setCategories] = useState([])
+  const { query } = useRouter()
 
   useEffect(() => {
     getCategories().then((newCategories) => setCategories(newCategories))
@@ -23,7 +25,11 @@ const Header = () => {
         <div className="hidden md:float-left md:contents">
           {categories.map((category) => (
             <Link key={category.slug} href={`/category/${category.slug}`}>
-              <span className="mt-2 ml-4 cursor-pointer align-middle font-semibold text-white md:float-right">
+              <span
+                className={`mt-2 ml-4 cursor-pointer align-middle font-semibold text-white md:float-right  ${
+                  category.slug === query.slug && 'underline underline-offset-8'
+                }`}
+              >
                 {category.name}
               </span>
             </Link>
